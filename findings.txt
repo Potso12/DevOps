@@ -1,0 +1,8 @@
+To be honest i did not find much of a new information in this exercise since
+I was already quite familiar with docker. Here is list of things that I 
+knew already and of things that I did not. I already knew that it was possible 
+to expose ports on local computer to docker containers. Even I did not need that
+in this exercise I also knew that You can use files that Are not in docker container
+by referencing them in host machine (Bind mount), and persist files inside images with
+volumes. I also finally after this exercixe understand the meanning of networks. You
+can create those within container and containers also share the host machines network. 

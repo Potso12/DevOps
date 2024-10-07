@@ -1,0 +1,18 @@
+services:
+  service1:
+    build: ./service1
+    networks:
+      - devops_network
+
+
+  service2:
+    build: ./service2
+    ports:
+    - "8199:8199"
+    networks:
+      - devops_network
+
+networks:
+  devops_network:
+    name: devops_network
+    driver: bridge
