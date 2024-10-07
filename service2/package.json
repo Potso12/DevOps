@@ -1,0 +1,23 @@
+{
+  "name": "service2",
+  "version": "1.0.0",
+  "description": "",
+  "main": "service2.js",
+  "scripts": {
+    "service2": "node service2.js",
+    "dev": "nodemon service2.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "check-disk-space": "^3.4.0",
+    "dockerode": "^4.0.2",
+    "express": "^4.21.0",
+    "http": "^0.0.1-security",
+    "ip": "^2.0.1",
+    "nodemon": "^3.1.7"
+  },
+  "devDependencies": {
+    "@types/ip": "^1.1.3"
+  }
+}
