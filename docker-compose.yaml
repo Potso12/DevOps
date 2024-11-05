@@ -1,16 +1,29 @@
 services:
+  service2:
+    build: ./service2
+    networks:
+      - devops_network
+
+
   service1:
     build: ./service1
     networks:
       - devops_network
+    deploy:
+      replicas: 4
 
 
-  service2:
-    build: ./service2
-    ports:
-    - "8199:8199"
+  nginx:
+    build: ./nginx
+    container_name: nginx
     networks:
       - devops_network
+    depends_on:
+      - service2
+      - service1
+    ports:
+      - "8200:8200"
+
 
 networks:
   devops_network:
