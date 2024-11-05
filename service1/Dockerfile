@@ -1,12 +1,10 @@
-FROM python:3
+FROM node:latest
 
 WORKDIR /usr/src/app
 
-COPY ./service1.py ./service1.py
-COPY ./requirements.txt ./requirements.txt
+COPY ./service1.js ./service1.js
+COPY ./package.json ./package.json
 
+RUN npm install
 
-RUN pip install --no-cache-dir -r requirements.txt
-
-
-CMD ["python", "service1.py"]
+CMD ["npm", "run", "service1"]

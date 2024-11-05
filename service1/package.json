@@ -4,8 +4,8 @@
   "description": "",
   "main": "service2.js",
   "scripts": {
-    "service2": "node service2.js",
-    "dev": "nodemon service2.js"
+    "service1": "node --trace-warnings service1.js",
+    "dev": "nodemon service1.js"
   },
   "author": "",
   "license": "ISC",
@@ -15,7 +15,8 @@
     "express": "^4.21.0",
     "http": "^0.0.1-security",
     "ip": "^2.0.1",
-    "nodemon": "^3.1.7"
+    "nodemon": "^3.1.7",
+    "sleep": "^6.3.0"
   },
   "devDependencies": {
     "@types/ip": "^1.1.3"

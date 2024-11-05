@@ -5,11 +5,23 @@ const util = require('util');
 const ip = require('ip')
 const checkDiskSpace = require('check-disk-space').default
 const process = require('process');
+const sleep = require('sleep');
+
 
 
 const execPromise = util.promisify(exec);
 
 const app = express();
+
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    setTimeout(() => {
+      console.log('Wait 10s')
+    }, 10000)
+  })
+  next()
+})
+
 
 const getDisckSpace = async () => {
     try {
@@ -57,12 +69,14 @@ const getProcesses = async () => {
   };
 
 app.get('/', async (request, response) => {
-
+    
+    console.log('New request')
     const disckSpace = await getDisckSpace()
 
     const processes = await getProcesses()
 
     const lastBoot = await getProcessStartTime(process.pid)
+
 
     let service2Info = {
         ipAdress: ip.address(),
@@ -74,7 +88,7 @@ app.get('/', async (request, response) => {
 
     try {
         let data = '';
-        http.get('http://service1:8200', (res) => {
+        http.get('http://service2:8201', (res) => {
 
             res.on('data', (chunk) => {
                 data += chunk;
@@ -83,6 +97,7 @@ app.get('/', async (request, response) => {
             res.on('end', () => {
                 const service1Info = JSON.parse(data);
                 response.send({service1Info, service2Info})
+                sleep.sleep(2)
             });
 
             request.on('error', (error) => {
@@ -90,7 +105,6 @@ app.get('/', async (request, response) => {
                 response.status(500).json({ error: 'Error connecting to other server' });
             });
         })
-
     } catch (error) {
         console.error('Error connecting to other server', error);
         response.status(500).json({ error: 'Error connnecting to other server' });
@@ -100,4 +114,3 @@ app.get('/', async (request, response) => {
 app.listen(8199,() =>{
     console.log('Server is running on PORT 8199');
 });
-
