@@ -1,4 +1,5 @@
 services:
+
   service2:
     build: ./service2
     networks:
@@ -9,8 +10,17 @@ services:
     build: ./service1
     networks:
       - devops_network
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
       replicas: 4
+
+  front_end:
+    build: ./front_end
+    ports:
+      - 8198:8197
+    networks:
+      - devops_network
 
 
   nginx:
@@ -18,14 +28,13 @@ services:
     container_name: nginx
     networks:
       - devops_network
+    ports:
+      - 8198:8198
     depends_on:
       - service2
       - service1
-    ports:
-      - "8200:8200"
 
 
 networks:
   devops_network:
-    name: devops_network
     driver: bridge

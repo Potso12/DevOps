@@ -2,8 +2,8 @@ const express = require('express');
 const http = require('node:http');
 const { exec } = require('child_process');
 const util = require('util');
-const ip = require('ip')
-const checkDiskSpace = require('check-disk-space').default
+const ip = require('ip');
+const checkDiskSpace = require('check-disk-space');
 const process = require('process');
 const sleep = require('sleep');
 
@@ -68,6 +68,24 @@ const getProcesses = async () => {
     }
   };
 
+  async function getId() {
+    try {
+        const { stdout } = await execPromise('cat /etc/hostname');
+        return stdout.trim();
+    } catch (err) {
+        console.error('Error reading the hostname:', err);
+        return 'Wrong';
+    }
+}
+
+async function getInstance(containerId) {
+  console.log(`containerId ${containerId}`)
+  const { stdout } = await execPromise(`docker inspect ${containerId}`)
+  const data = JSON.parse(stdout)
+  const name = data[0].Name
+  return name.slice(-1)
+}
+
 app.get('/', async (request, response) => {
     
     console.log('New request')
@@ -110,6 +128,38 @@ app.get('/', async (request, response) => {
         response.status(500).json({ error: 'Error connnecting to other server' });
     }
 })
+
+app.delete('/', async (request, response) => {
+
+  try {
+    response.status(200).send()
+    const containerId = await getId()
+    const instance = await getInstance(containerId)
+
+    console.log(instance)
+    let instanceIndex = Number(instance)
+    console.log('before removing practical1-service2-1')
+    await execPromise('docker kill practical1-service2-1')
+
+    for (let i = 0; i < 4; i++) {
+      let serviceNumber = (instanceIndex + 1) % 4
+      if(serviceNumber === 0){
+        serviceNumber = 4
+      }
+
+      await execPromise('docker kill nginx')
+      await execPromise(`docker kill practical1-service1-${serviceNumber}`)
+      instanceIndex += 1
+    }
+
+
+
+  } catch (error) {
+    console.log("Error in removing containers", error)
+    response.status(500).send()
+  }
+})
+
 
 app.listen(8199,() =>{
     console.log('Server is running on PORT 8199');
