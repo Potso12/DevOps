@@ -10,15 +10,13 @@ services:
     build: ./service1
     networks:
       - devops_network
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
     deploy:
-      replicas: 4
+      replicas: 3
 
   front_end:
     build: ./front_end
     ports:
-      - 8198:8197
+      - 8198:8198
     networks:
       - devops_network
 
@@ -29,7 +27,7 @@ services:
     networks:
       - devops_network
     ports:
-      - 8198:8198
+      - 8197:8197
     depends_on:
       - service2
       - service1

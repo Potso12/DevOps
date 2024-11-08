@@ -4,6 +4,7 @@ import axios from 'axios'
 import { Buffer as BufferPolyfill } from 'buffer'
 
 
+
 function App() {
   const [isloggedIn, setIsloggedIn] = useState(false)
   const [text, setText] = useState('')
@@ -11,14 +12,18 @@ function App() {
   const [password, setPassword] = useState('')
   const [basicToken, setBasicToken] = useState('')
 
+  const generateToken = async () => {
+    const auth = BufferPolyfill.from(`${username}:${password}`, 'utf8').toString('base64');
+    setBasicToken(`Basic ${auth}`);
+  };
 
   const LogIn = async (e) => {
     e.preventDefault()
-    const auth = BufferPolyfill.from(`${username}:${password}`, 'utf8').toString('base64');
-    setBasicToken(`Basic ${auth}`)
+    await generateToken();
+
 
     try {
-      await axios.get('http://nginx:8198', {
+      await axios.get('http://localhost:8197', {
         headers: {
           'Authorization': basicToken
         }
@@ -28,6 +33,8 @@ function App() {
       console.log('log in succesfull')
     } catch (error) {
       setText('Wrong credentials! try again')
+      setUsername('')
+      setPassword('')
       console.log(error)
     }
   }
@@ -35,7 +42,7 @@ function App() {
 const request = async (e) => {
   e.preventDefault()
   try {
-    const response = await axios.get('http://nginx:8198', {
+    const response = await axios.get('http://localhost:8197', {
       headers: {
       'Authorization': basicToken
       }
@@ -49,11 +56,13 @@ const request = async (e) => {
 const stop = async (e) => {
   e.preventDefault()
   try {
-    await axios.delete('http://nginx:8198', {
+    for (let i = 0; i < 3; i++) {
+      await axios.delete('http://localhost:8197', {
       headers: {
-      'Authorization': basicToken
+        'Authorization': basicToken
       }
-    })
+      })
+    }
   } catch {
     console.log('error in request to server')
   }
@@ -68,6 +77,7 @@ const stop = async (e) => {
           <input type="text" onChange={(e) => setUsername(e.target.value) } />
           <input type="password" onChange={(e) => setPassword(e.target.value)} />
           <button type="submit">Log in</button>
+          <p>{text}</p>
         </form>
       </div>
       ) :

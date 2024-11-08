@@ -68,24 +68,6 @@ const getProcesses = async () => {
     }
   };
 
-  async function getId() {
-    try {
-        const { stdout } = await execPromise('cat /etc/hostname');
-        return stdout.trim();
-    } catch (err) {
-        console.error('Error reading the hostname:', err);
-        return 'Wrong';
-    }
-}
-
-async function getInstance(containerId) {
-  console.log(`containerId ${containerId}`)
-  const { stdout } = await execPromise(`docker inspect ${containerId}`)
-  const data = JSON.parse(stdout)
-  const name = data[0].Name
-  return name.slice(-1)
-}
-
 app.get('/', async (request, response) => {
     
     console.log('New request')
@@ -129,36 +111,52 @@ app.get('/', async (request, response) => {
     }
 })
 
-app.delete('/', async (request, response) => {
-
+app.delete('/', async (req, res) => {
   try {
-    response.status(200).send()
-    const containerId = await getId()
-    const instance = await getInstance(containerId)
+    // Set up options for the HTTP request
+    const options = {
+      hostname: 'service2',
+      port: 8201,
+      path: '/',
+      method: 'DELETE'
+    };
 
-    console.log(instance)
-    let instanceIndex = Number(instance)
-    console.log('before removing practical1-service2-1')
-    await execPromise('docker kill practical1-service2-1')
+    // Wait for the response from the HTTP request to service2
+    const data = await new Promise((resolve, reject) => {
+      let data = '';
+      const request = http.get(options, (response) => {
+        response.on('data', (chunk) => {
+          data += chunk;
+        });
 
-    for (let i = 0; i < 4; i++) {
-      let serviceNumber = (instanceIndex + 1) % 4
-      if(serviceNumber === 0){
-        serviceNumber = 4
-      }
+        response.on('end', () => {
+          resolve(data); // Resolve the promise once the request completes
+        });
 
-      await execPromise('docker kill nginx')
-      await execPromise(`docker kill practical1-service1-${serviceNumber}`)
-      instanceIndex += 1
-    }
+        response.on('error', (err) => {
+          reject(err); // Reject the promise if there is an error
+        });
+      });
 
+      request.on('error', (err) => {
+        reject(err); // Reject the promise if the request itself fails
+      });
+    });
 
+    // Log the response from service2
+    console.log('Service 2 removed:', data);
 
+    // Send the HTTP response to the client after the request completes
+    res.status(200).send('Request completed successfully');
+
+    // Now, terminate the process if needed
+    process.exit(0); // Be careful using this in a production environment
   } catch (error) {
-    console.log("Error in removing containers", error)
-    response.status(500).send()
+    // Handle any error that occurred during the HTTP request or process
+    console.error('Error:', error);
+    res.status(500).send('Internal Server Error');
   }
-})
+});
 
 
 app.listen(8199,() =>{

@@ -5,6 +5,7 @@ import shutil
 import subprocess
 import os
 import datetime
+import sys
 
 
 
@@ -57,6 +58,13 @@ class myHTTPhandler(BaseHTTPRequestHandler):
         
         as_json = json.dumps(service_info)
         self.wfile.write(as_json.encode('utf-8'))
+
+    def do_DELETE(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b'Resource deleted')
+        sys.exit(0)
+        
 
 
 
