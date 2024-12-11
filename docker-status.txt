@@ -1,0 +1,13 @@
+ NAMES
+23d738aa92a0   devops-nginx       "/docker-entrypoint.…"   23 minutes ago   Up 5 minutes   80/tcp, 8198/tcp, 0.0.0.0:8197->8197/tcp   nginx
+9360fa134edf   devops-service1    "docker-entrypoint.s…"   23 minutes ago   Up 5 minutes                                              devops-service1-2
+f52ad2b2d5e8   devops-front_end   "docker-entrypoint.s…"   23 minutes ago   Up 5 minutes   0.0.0.0:8198->8198/tcp                     devops-front_end-1
+a32a96a3604e   devops-service1    "docker-entrypoint.s…"   23 minutes ago   Up 5 minutes                                              devops-service1-3
+2bc2961b38ba   devops-service1    "docker-entrypoint.s…"   23 minutes ago   Up 5 minutes                                              devops-service1-1
+32a7a4f57b9f   devops-service2    "python service2.py"     23 minutes ago   Up 5 minutes                                              devops-service2-1
+
+NETWORK ID     NAME                    DRIVER    SCOPE
+f4167d81bcdc   bridge                  bridge    local
+804662ea1556   devops_devops_network   bridge    local
+eec8c610f128   host                    host      local
+ea3e7e4cf4e2   none                    null      local
