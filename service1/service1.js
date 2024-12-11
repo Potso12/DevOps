@@ -13,15 +13,6 @@ const execPromise = util.promisify(exec);
 
 const app = express();
 
-app.use((req, res, next) => {
-  res.on('finish', () => {
-    setTimeout(() => {
-      console.log('Wait 10s')
-    }, 10000)
-  })
-  next()
-})
-
 
 const getDisckSpace = async () => {
     try {
@@ -70,7 +61,7 @@ const getProcesses = async () => {
 
 app.get('/', async (request, response) => {
     
-    console.log('New request')
+    console.log('New request', request.headers)
     const disckSpace = await getDisckSpace()
 
     const processes = await getProcesses()

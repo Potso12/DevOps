@@ -1,4 +1,3 @@
-import './App.css'
 import { useState } from 'react'
 import axios from 'axios'
 import { Buffer as BufferPolyfill } from 'buffer'
@@ -10,10 +9,10 @@ function App() {
   const [text, setText] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [basicToken, setBasicToken] = useState('')
+  const [basicToken, setBasicToken] = useState('Basic b3Rzb3Q6cGFzc3dvcmQ=')
 
   const generateToken = async () => {
-    const auth = BufferPolyfill.from(`${username}:${password}`, 'utf8').toString('base64');
+    const auth = await BufferPolyfill.from(`${username}:${password}`, 'utf8').toString('base64');
     setBasicToken(`Basic ${auth}`);
   };
 
@@ -41,6 +40,7 @@ function App() {
 
 const request = async (e) => {
   e.preventDefault()
+  console.log(basicToken)
   try {
     const response = await axios.get('http://localhost:8197', {
       headers: {
@@ -55,6 +55,7 @@ const request = async (e) => {
 
 const stop = async (e) => {
   e.preventDefault()
+  console.log(basicToken)
   try {
     for (let i = 0; i < 3; i++) {
       await axios.delete('http://localhost:8197', {
